@@ -1,5 +1,8 @@
 from flask import Flask, render_template
+from keras.models import model_from_json
+import os
 
+base_dir = os.path.dirname(os.path.realpath(__file__))
 app = Flask(__name__)
 app.config.from_object('config')
 
@@ -9,13 +12,35 @@ def home():
     return render_template('/layouts/main.html')
 
 
+@app.route('/predict/<params>', methods=['POST'])
+def predict(params):
+
+    # load model json file
+    model_path_name = get_model_path_and_filename(params)
+    json_file = open(model_path_name + "model.json", 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+
+    # convert json to model and load weights
+    loaded_model = model_from_json(loaded_model_json)
+    loaded_model.load_weights(model_path_name + "model.h5")
+
+
+def get_model_path_and_filename(params):
+    values = []
+    for key in params.keys():
+        values.append(params[key])
+    folder_name = ''.join(values)
+    return base_dir + os.path.sep + 'models' + os.path.sep + folder_name + os.path.sep
+
+
 @app.errorhandler(500)
-def internal_error():
+def internal_error(error):
     return render_template('errors/500.html'), 500
 
 
 @app.errorhandler(404)
-def not_found_error():
+def not_found_error(error):
     return render_template('errors/404.html'), 404
 
 
