@@ -125,7 +125,7 @@ $(document).ready(function () {
         $.ajax({
             type: "POST",
             url: "/predict",
-            data: pjson,
+            data: JSON.stringify(pjson),
             contentType: "application/json",
             success: function (data) {
                 console.log(data);
