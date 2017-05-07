@@ -35,3 +35,8 @@
   margin-top: 40px;
   margin-right: 20px;
 }
+
+#nndiagram {
+  border: black;
+  height: 300px;
+}
