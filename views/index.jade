@@ -4,13 +4,23 @@ block content
     div.row.text-center
       div.twelve.columns CNN VISUALIZER
     div.row.text-center
-      div.two.columns hyperparameters
-      div.eight.columns builder
-          .container
-              div input
-              div conv
-              div output
-      div.two.columns button
+      div.twelve.columns hyperparameters
+    div.row.text-center
+      div.ten.columns
+          .container(style='float:left;margin-left:20px')
+              div.excl(style='left:10px') input
+              div Conv
+              div ReLU
+              div Pooling
+              div.excl(style='right:10px')#out output
+          .layerselector
+              select#layerpicker
+                 option ReLU
+                 option Conv
+                 option Pooling
+              button.btn.btn-default#layerbutton Add
+      div.two.columns
+          button.btn.btn-default.btn-block#predict Predict
     div.row.text-center
       div.twelve.columns nn diagram
     div.row.text-center
