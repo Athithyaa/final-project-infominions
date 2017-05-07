@@ -1,0 +1,54 @@
+extends layout
+
+block content
+    div.row.text-center
+      div.twelve.columns CNN VISUALIZER
+    div.row.text-center
+      div.twelve.columns hyperparameters
+          div.conv-net(style='float:left;margin-left:20px')
+              label(style='display:inline-block;padding-left:10px;') No of Filters
+              select#noOfFilters(style='display:inline-block;margin-left:10px;')
+                  option 5
+                  option 10
+                  option 15
+              label(style='display:inline-block;padding-left:10px;') Spatial Extent
+              select#spatial_extent(style='display:inline-block;margin-left:10px;')
+                  option 3x3
+                  option 5x5
+              label(style='display:inline-block;padding-left:10px;') Stride
+              select#stride(style='display:inline-block;margin-left:10px;')
+                  option 3
+                  option 5
+          div.max-pool(style='float:left;margin-left:20px')
+              label(style='display:inline-block;padding-left:10px;') Spatial Extent
+              select#spatial_extent_mp(style='display:inline-block;margin-left:10px;')
+                  option 2x2
+                  option 3x3
+              label(style='display:inline-block;padding-left: 10px;') Stride
+              select#stride_mp(style='display:inline-block;margin-left:10px;')
+                  option 2
+                  option 3
+    div.row.text-center
+      div.ten.columns
+          .container(style='float:left;margin-left:20px')
+              div.excl(style='left:10px') input
+              div Conv
+              div ReLU
+              div Pooling
+              div.excl(style='right:10px')#out output
+          .layerselector
+              select#layerpicker
+                 option ReLU
+                 option Conv
+                 option Pooling
+              button.btn.btn-default#layerbutton Add
+      div.two.columns
+          button.btn.btn-default.btn-block#predict Predict
+    div.row.text-center
+      div.twelve.columns nn diagram
+    div.row.text-center
+      div.four.columns#bar_chart bar chart
+          svg
+      div.four.columns#line_chart line chart
+          svg
+      div.four.columns confusion matrix
