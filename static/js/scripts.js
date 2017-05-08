@@ -1,4 +1,5 @@
 var cnt = 0;
+var margin = {top: 50, right: 50, bottom: 100, left: 100};
 
 function addLayer(name) {
     $("<div>" + name + "</div>").insertBefore("#out");
@@ -7,27 +8,27 @@ function addLayer(name) {
 
 function drawNN(imgData){
 
-    var width = 32, height = 32,buffer = new Uint8ClampedArray(width*height*4);
-
-    var numLayers = 5;
+    var keys = Object.keys(imgData);
+    var numLayers = keys.length-1;
 
     var nodes = [];
     var edges = [];
     var ldescp = {};
     var cnt = 1;
-    var nn = [1,5,5,5,5];
-    for(var i=1;i<=numLayers;i++){
-        var numNodes = nn[i-1];
-        for(var j=1;j<=numNodes;j++){
 
+    for(var i=1;i<=numLayers;i++){
+        var numNodes = imgData[keys[i-1]].length;
+        for(var j=1;j<=numNodes;j++){
+            var img = imgData[keys[i-1]][j-1];
+            var width = img.length, height = img[0].length,buffer = new Uint8ClampedArray(width*height*4);
             for(var y = 0; y < height; y++) {
                 for(var x = 0; x < width; x++) {
                     var pos = (width * y + x) << 2;
-                    var pv = Math.floor(Math.random()*255);
+                    var pv = img[y][x]*255;
                     buffer[pos] = pv;
                     buffer[pos+1] = pv;
                     buffer[pos+2] = pv;
-                    buffer[pos+3] = pv;
+                    buffer[pos+3] = 255;
                 }
             }
 
@@ -93,8 +94,11 @@ function drawNN(imgData){
         nodes: {
             fixed: {
                 x: true,
-                y: true
+                y: false
             }
+        },
+        interaction: {
+            zoomView: false
         }
     };
 
@@ -128,15 +132,212 @@ $(document).ready(function () {
             data: JSON.stringify(pjson),
             contentType: "application/json",
             success: function (data) {
-                console.log(data);
+                var result = data["result"];
+                drawNN(result);
             }
         })
     });
 
     plotBarChart(exampleData());
     plotLineChart(sinAndCos());
-    drawNN("test");
+    var confusionMatrix = [
+        [5,65,17,29,95,30,3,64,25,90],
+        [68,51,39,43,92,70,56,37,29,87],
+        [4,97,83,1,5,66,88,19,61,81],
+        [7,64,80,98,73,53,66,42,26,26],
+        [52,80,6,16,26,69,19,48,82,59],
+        [9,45,39,10,42,66,36,12,98,2],
+        [81,43,52,37,54,17,46,58,73,42],
+        [81,82,41,19,94,12,98,22,34,31],
+        [72,8,65,48,41,99,15,38,58,16],
+        [14,13,62,33,98,17,85,58,10,17]
+    ];
+    var labels = ['Class A', 'Class B', 'Class C', 'Class D','Class E', 'Class F','Class G', 'Class H','Class I', 'Class J' ];
+    plotConfusionMatrix(confusionMatrix,labels);
 });
+
+function plotConfusionMatrix(confusionMatrix,labels){
+    Matrix({
+        container : '#confusion_matrix',
+        data      : confusionMatrix,
+        labels    : labels,
+        start_color : '#ffffff',
+        end_color : '#e67e22'
+    });
+
+}
+
+function Matrix(options) {
+    var width = 250,
+        height = 250,
+        data = options.data,
+        container = options.container,
+        labelsData = options.labels,
+        startColor = options.start_color,
+        endColor = options.end_color;
+
+    var widthLegend = 100;
+
+    if(!data){
+        throw new Error('Please pass data');
+    }
+
+    if(!Array.isArray(data) || !data.length || !Array.isArray(data[0])){
+        throw new Error('It should be a 2-D array');
+    }
+
+    var maxValue = d3.max(data, function(layer) { return d3.max(layer, function(d) { return d; }); });
+    var minValue = d3.min(data, function(layer) { return d3.min(layer, function(d) { return d; }); });
+
+    var numrows = data.length;
+    var numcols = data[0].length;
+
+    var svg = d3.select(container).append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var background = svg.append("rect")
+        .style("stroke", "black")
+        .style("stroke-width", "2px")
+        .attr("width", width)
+        .attr("height", height);
+
+    var x = d3.scale.ordinal()
+        .domain(d3.range(numcols))
+        .rangeBands([0, width]);
+
+    var y = d3.scale.ordinal()
+        .domain(d3.range(numrows))
+        .rangeBands([0, height]);
+
+    var colorMap = d3.scale.linear()
+        .domain([minValue,maxValue])
+        .range([startColor, endColor]);
+
+    var row = svg.selectAll(".row")
+        .data(data)
+        .enter().append("g")
+        .attr("class", "row")
+        .attr("transform", function(d, i) { return "translate(0," + y(i) + ")"; });
+
+    var cell = row.selectAll(".cell")
+        .data(function(d) { return d; })
+        .enter().append("g")
+        .attr("class", "cell")
+        .attr("transform", function(d, i) { return "translate(" + x(i) + ", 0)"; });
+
+    cell.append('rect')
+        .attr("width", x.rangeBand())
+        .attr("height", y.rangeBand())
+        .style("stroke-width", 0);
+
+    cell.append("text")
+        .attr("dy", ".32em")
+        .attr("x", x.rangeBand() / 2)
+        .attr("y", y.rangeBand() / 2)
+        .attr("text-anchor", "middle")
+        .style("fill", function(d, i) { return d >= maxValue/2 ? 'white' : 'black'; })
+        .text(function(d, i) { return d; });
+
+    row.selectAll(".cell")
+        .data(function(d, i) { return data[i]; })
+        .style("fill", colorMap);
+
+    var labels = svg.append('g')
+        .attr('class', "labels");
+
+    var columnLabels = labels.selectAll(".column-label")
+        .data(labelsData)
+        .enter().append("g")
+        .attr("class", "column-label")
+        .attr("transform", function(d, i) { return "translate(" + x(i) + "," + (height+25) + ")"; });
+
+    columnLabels.append("line")
+        .style("stroke", "black")
+        .style("stroke-width", "1px")
+        .attr("x1", x.rangeBand() / 2)
+        .attr("x2", x.rangeBand() / 2)
+        .attr("y1", 0)
+        .attr("y2", 5);
+
+    columnLabels.append("text")
+        .attr("x", 30)
+        .attr("y", y.rangeBand() / 2)
+        .attr("dy", ".22em")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-60)")
+        .text(function(d, i) { return d; });
+
+    var rowLabels = labels.selectAll(".row-label")
+        .data(labelsData)
+        .enter().append("g")
+        .attr("class", "row-label")
+        .attr("transform", function(d, i) { return "translate(" + 0 + "," + y(i) + ")"; });
+
+    rowLabels.append("line")
+        .style("stroke", "black")
+        .style("stroke-width", "1px")
+        .attr("x1", 0)
+        .attr("x2", -5)
+        .attr("y1", y.rangeBand() / 2)
+        .attr("y2", y.rangeBand() / 2);
+
+    rowLabels.append("text")
+        .attr("x", -8)
+        .attr("y", y.rangeBand() / 2)
+        .attr("dy", ".32em")
+        .attr("text-anchor", "end")
+        .text(function(d, i) { return d; });
+
+    var key = d3.select("#legend")
+        .append("svg")
+        .attr("width", widthLegend)
+        .attr("height", height + margin.top + margin.bottom);
+
+    var legend = key
+        .append("defs")
+        .append("svg:linearGradient")
+        .attr("id", "gradient")
+        .attr("x1", "100%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "100%")
+        .attr("spreadMethod", "pad");
+
+    legend
+        .append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", endColor)
+        .attr("stop-opacity", 1);
+
+    legend
+        .append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", startColor)
+        .attr("stop-opacity", 1);
+
+    key.append("rect")
+        .attr("width", widthLegend/2-10)
+        .attr("height", height)
+        .style("fill", "url(#gradient)")
+        .attr("transform", "translate(0," + margin.top + ")");
+
+    var y = d3.scale.linear()
+        .range([height, 0])
+        .domain([minValue, maxValue]);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("right");
+
+    key.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(41," + margin.top + ")")
+        .call(yAxis)
+
+}
 
 function plotBarChart(data) {
     nv.addGraph(function() {
@@ -192,7 +393,7 @@ function plotLineChart(data) {
 }
 
 function sinAndCos() {
-    var sin = []
+    var sin = [];
 
     //Data is represented as an array of {x,y} pairs.
     for (var i = 0; i < 100; i++) {

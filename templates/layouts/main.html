@@ -20,12 +20,12 @@
 <script src="/static/js/scripts.js"></script>
 </head>
 <body>
-  <div class="row text-center">
-  <div class="twelve columns">CNN VISUALIZER</div>
+  <div class="row text-center" >
+      <div class="twelve columns" style="border: 1px solid black" ><h5>CNN VISUALIZER</h5></div>
 </div>
 <div class="row text-center">
-  <div class="twelve columns">hyperparameters
-    <div class="conv-net" style="float:left;margin-left:20px">
+  <div class="twelve columns" style="border: 1px solid black; padding-top: 20px;">
+    <div class="conv-net" style="float:left;margin-left:200px">
       <label style="display:inline-block;padding-left:10px">No of Filters</label>
       <select id="noOfFilters" style="display:inline-block;margin-left:10px">
         <option>8</option>
@@ -57,8 +57,8 @@
     </div>
 </div>
 </div>
-<div class="row text-center">
-  <div class="ten columns">
+<div class="row text-center" style="border: 1px solid black;">
+  <div class="ten columns" style="padding: 10px">
     <div class="container" style="float:left;margin-left:20px">
       <div class="excl" style="left:10px">input</div>
       <div>Conv</div>
@@ -79,17 +79,17 @@
     <button class="btn btn-default btn-block" id="predict">Predict</button>
   </div>
 </div>
-<div class="row text-center">
-  <div id="nndiagram" class="twelve columns">nn diagram</div>
-</div>
-<div class="row text-center">
-  <div class="four columns" id="bar_chart">bar chart
-    <svg></svg>
+<div class="row text-center" style="border: 1px solid black;">
+  <div id="nndiagram" class="eight columns" style="border: 1px solid black; margin-top: 15px"></div>
+  <div class="four columns">
+      <div id="bar_chart">
+        <svg></svg>
+      </div>
+      <div id="line_chart">
+        <svg></svg>
+      </div>
+      <div id="confusion_matrix"></div>
   </div>
-  <div class="four columns" id="line_chart">line chart
-    <svg></svg>
-  </div>
-  <div class="four columns">confusion matrix</div>
 </div>
 </body>
 </html>
