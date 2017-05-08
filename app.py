@@ -16,6 +16,7 @@ X_test = X_test.astype('float32')
 X_test /= np.max(X_test)
 X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
 
+
 @app.route('/')
 def home():
     return render_template('/layouts/main.html')
@@ -40,7 +41,7 @@ def predict():
     test_image = X_test[test_image_index]
     test_image = test_image.reshape(test_image.shape[0], test_image.shape[1])
 
-    result_json = {'layer_0': test_image.tolist()}
+    result_json = {'layer_0': [test_image.tolist()]}
 
     conv_layer_num = 0
     relu_layer_num = 0
