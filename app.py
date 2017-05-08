@@ -95,9 +95,11 @@ def predict():
 
     acc = []
     loss = []
+    cnt = 1
     for key, value in score_file_json.items():
-        loss.append(value["scores"]["loss"])
-        acc.append(value["scores"]["accr"])
+        loss.append({'x': cnt, 'y': value["scores"]["loss"]})
+        acc.append({'x': cnt, 'y': value["scores"]["accr"]})
+        cnt = cnt+1
 
     result_json['acc_loss'] = [{'key': 'Accuracy', 'values': acc}, {'key': 'Loss', 'values': loss}]
 
