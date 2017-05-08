@@ -133,13 +133,14 @@ $(document).ready(function () {
             contentType: "application/json",
             success: function (data) {
                 var result = data["result"];
-                drawNN(result);
+                drawNN(result["layers"]);
+                plotBarChart([result["probability"]]);
+                plotLineChart(result["acc_loss"]);
             }
         })
     });
 
-    plotBarChart(exampleData());
-    plotLineChart(sinAndCos());
+
     var confusionMatrix = [
         [5,65,17,29,95,30,3,64,25,90],
         [68,51,39,43,92,70,56,37,29,87],
@@ -408,54 +409,4 @@ function sinAndCos() {
             color: '#ff7f0e'  //color - optional: choose your own line color.
         }
     ];
-}
-
-function exampleData() {
-    return  [
-        {
-            values: [
-                {
-                    "label" : "1" ,
-                    "value" : 0.01
-                } ,
-                {
-                    "label" : "2" ,
-                    "value" : 0.05
-                } ,
-                {
-                    "label" : "3" ,
-                    "value" : 0.50
-                } ,
-                {
-                    "label" : "4" ,
-                    "value" : 0.03
-                } ,
-                {
-                    "label" : "5" ,
-                    "value" : 0.1
-                } ,
-                {
-                    "label" : "6" ,
-                    "value" : 0.04
-                } ,
-                {
-                    "label" : "7" ,
-                    "value" : 0
-                } ,
-                {
-                    "label" : "8" ,
-                    "value" : 0.2
-                } ,
-                {
-                    "label" : "9" ,
-                    "value" : 0.04
-                } ,
-                {
-                    "label" : "10" ,
-                    "value" : 0.03
-                }
-
-            ]
-        }
-    ]
 }
