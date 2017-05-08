@@ -88,6 +88,19 @@ def predict():
     for i in range(prob.shape[1]):
         vals.append({"label": str(i), "value": float(prob[0][i])})
     result_json['probability'] = {"values": vals}
+
+    score_file = open(model_path_name + "model_score.json", 'r')
+    score_file_json = json.loads(score_file.read())
+    score_file.close()
+
+    acc = []
+    loss = []
+    for key, value in score_file_json.items():
+        loss.append(value["scores"]["loss"])
+        acc.append(value["scores"]["accr"])
+
+    result_json['acc_loss'] = [{'key': 'Accuracy', 'values': acc}, {'key': 'Loss', 'values': loss}]
+
     return jsonify(result=result_json)
 
 
