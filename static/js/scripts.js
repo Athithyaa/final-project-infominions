@@ -1,19 +1,141 @@
+var cnt = 0;
+
 function addLayer(name) {
     $("<div>" + name + "</div>").insertBefore("#out");
     $(".container").shapeshift({maxColumns: 1,selector: "*:not('.excl')"});
 }
 
+function drawNN(imgData){
+
+    var width = 32, height = 32,buffer = new Uint8ClampedArray(width*height*4);
+
+    var numLayers = 5;
+
+    var nodes = [];
+    var edges = [];
+    var ldescp = {};
+    var cnt = 1;
+    var nn = [1,5,5,5,5];
+    for(var i=1;i<=numLayers;i++){
+        var numNodes = nn[i-1];
+        for(var j=1;j<=numNodes;j++){
+
+            for(var y = 0; y < height; y++) {
+                for(var x = 0; x < width; x++) {
+                    var pos = (width * y + x) << 2;
+                    var pv = Math.floor(Math.random()*255);
+                    buffer[pos] = pv;
+                    buffer[pos+1] = pv;
+                    buffer[pos+2] = pv;
+                    buffer[pos+3] = pv;
+                }
+            }
+
+            var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
+            canvas.width = width;
+            canvas.height = height;
+            var idata = ctx.createImageData(width, height);
+            idata.data.set(buffer);
+            ctx.putImageData(idata, 0, 0, 0, 0, width,height);
+            var dataUri = canvas.toDataURL();
+
+            nodes.push({id: cnt, level:i-1, image:dataUri, shape:'image'});
+            if(ldescp[String(i-1)])
+                ldescp[String(i-1)].push(cnt);
+            else
+                ldescp[String(i-1)] = [cnt];
+            cnt+=1;
+        }
+    }
+
+    function constructEdges(l1,l2,fc) {
+        var edges = [];
+        var i,j;
+        if(!fc){
+            if(ldescp[l1].length > 1) {
+                for (i = 0; i < ldescp[l1].length; i++) {
+                    edges.push({from: ldescp[l1][i], to: ldescp[l2][i]});
+                }
+            }else{
+                for (i = 0; i < ldescp[l2].length; i++) {
+                    edges.push({from: ldescp[l1][0], to: ldescp[l2][i]});
+                }
+            }
+        }else{
+            if(ldescp[l1].length > 1) {
+                for (i = 0; i < ldescp[l1].length; i++) {
+                    for(j = 0; j< ldescp[l2].length; j++) {
+                        edges.push({from: ldescp[l1][i], to: ldescp[l2][j]});
+                    }
+                }
+            }
+        }
+        return edges;
+    }
+
+    for(i=0;i<numLayers-2;i++) {
+        edges = edges.concat(constructEdges(String(i),String(i+1),false));
+    }
+    edges = edges.concat(constructEdges(String(i),String(i+1),false));
+
+    var container = document.getElementById('nndiagram');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = { layout: {
+            hierarchical: {
+                direction: "LR"
+            }
+        },
+        nodes: {
+            fixed: {
+                x: true,
+                y: true
+            }
+        }
+    };
+
+    // initialize your network!
+    var network = new vis.Network(container, data, options);
+}
+
 $(document).ready(function () {
     $(".container").shapeshift({maxColumns: 1,selector: "*:not('.excl')"});
-    var cnt = 0;
     $("#layerbutton").click(function () {
         cnt+=1;
         if(cnt <= 3)
             addLayer($("#layerpicker").val());
-    })
+    });
 
-    plotBarChart(exampleData())
-    plotLineChart(sinAndCos())
+    $("#predict").click(function () {
+        var pjson = {};
+        pjson["noOfFilters"] = $("#noOfFilters").val();
+        pjson["spatialExtent"] = $("#spatial_extent").val()[0];
+        pjson["stride"] = $("#stride").val();
+        pjson["spatialExtentMp"] = $("#spatial_extent_mp").val()[0];
+        pjson["strideMp"] = $("#stride_mp").val();
+        var layerdivs = $(".ss-active-child");
+        pjson["layers"] = "";
+        for(var i=0;i<layerdivs.length;i++){
+            pjson["layers"] += layerdivs[i].innerText[0];
+        }
+        $.ajax({
+            type: "POST",
+            url: "/predict",
+            data: JSON.stringify(pjson),
+            contentType: "application/json",
+            success: function (data) {
+                console.log(data);
+            }
+        })
+    });
+
+    plotBarChart(exampleData());
+    plotLineChart(sinAndCos());
+    drawNN("test");
 });
 
 function plotBarChart(data) {
@@ -27,7 +149,7 @@ function plotBarChart(data) {
                 duration: 350
             });
 
-        chart.tooltip.enabled(false)
+        chart.tooltip.enabled(false);
 
         d3.select('#bar_chart svg')
             .datum(data)
