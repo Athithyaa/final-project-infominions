@@ -82,11 +82,12 @@ def predict():
         result_json['layers']['layer_'+str(layer_no)] = filter_arr
         layer_no = layer_no + 1
 
-    xx_test = X_test[test_image_index].reshape(1, 28, 28, 1)
-    prob = loaded_model.predict(xx_test)
+    dropout_layer_model = Model(inputs=loaded_model.input, outputs=loaded_model.layers[7].output)
+    dropout_layer_out = dropout_layer_model.predict(X_test[test_image_index-1:test_image_index])
+    prob = np.dot(dropout_layer_out[0], loaded_model.layers[8].weights[0].container.data)
     vals = []
-    for i in range(prob.shape[1]):
-        vals.append({"label": str(i), "value": float(prob[0][i])})
+    for i in range(len(prob)):
+        vals.append({"label": str(i), "value": float(prob[i])})
     result_json['probability'] = {"values": vals}
 
     score_file = open(model_path_name + "model_score.json", 'r')
