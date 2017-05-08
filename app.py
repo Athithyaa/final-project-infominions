@@ -103,6 +103,11 @@ def predict():
 
     result_json['acc_loss'] = [{'key': 'Accuracy', 'values': acc}, {'key': 'Loss', 'values': loss}]
 
+    cm_file = open(model_path_name + "model_confusion_matrix.json", 'r')
+    cm_file_json = json.loads(cm_file.read())
+    cm_file.close()
+
+    result_json['con_mat'] = cm_file_json
     return jsonify(result=result_json)
 
 
