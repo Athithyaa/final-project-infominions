@@ -65,16 +65,17 @@ def predict():
             relu_layer_num += 1
 
     layer_no = 1
+    xx_test = X_test[test_image_index].reshape(1, 28, 28, 1)
     for layer_name in layer_names:
         conv_layer_model = Model(inputs=loaded_model.input,
                                  outputs=loaded_model.get_layer(layer_name).output)
-        conv_layer_out = conv_layer_model.predict(X_test)
+        conv_layer_out = conv_layer_model.predict(xx_test)
 
         # Find convolution layer depth
         conv_depth = 8
 
         # Set list of filters in current conv layer
-        filters = [conv_layer_out[test_image_index, :, :, filt_id] for filt_id in range(conv_depth)]
+        filters = [conv_layer_out[0, :, :, filt_id] for filt_id in range(conv_depth)]
 
         filter_arr = []
         for filter_id, conv_filter in enumerate(filters):
@@ -96,9 +97,11 @@ def predict():
 
     acc = []
     loss = []
+    cnt = 1
     for key, value in score_file_json.items():
-        loss.append(value["scores"]["loss"])
-        acc.append(value["scores"]["accr"])
+        loss.append({'x': cnt, 'y': value["scores"]["loss"]})
+        acc.append({'x': cnt, 'y': value["scores"]["accr"]})
+        cnt = cnt+1
 
     result_json['acc_loss'] = [{'key': 'Accuracy', 'values': acc}, {'key': 'Loss', 'values': loss}]
 
