@@ -133,11 +133,15 @@ $(document).ready(function () {
             contentType: "application/json",
             success: function (data) {
                 var result = data["result"];
-                drawNN(result["layers"]);
-                plotBarChart([result["probability"]]);
-                plotLineChart(result["acc_loss"]);
-                var labels = ['0', '1', '2', '3','4', '5','6', '7','8', '9' ];
-                plotConfusionMatrix(result['con_mat'],labels);
+                if(result!=="invalid json") {
+                    drawNN(result["layers"]);
+                    plotBarChart([result["probability"]]);
+                    plotLineChart(result["acc_loss"]);
+                    var labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                    plotConfusionMatrix(result['con_mat'], labels);
+                }else{
+                    alert("Invalid Layer Selection");
+                }
             }
         })
     });
@@ -179,7 +183,7 @@ function Matrix(options) {
     var numrows = data.length;
     var numcols = data[0].length;
 
-    var svg = d3.select(container).append("svg")
+    var svg = d3.select("#confusion_matrix svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")

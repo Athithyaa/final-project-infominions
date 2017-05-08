@@ -59,7 +59,7 @@
 </div>
 <div class="row text-center" style="border: 1px solid black;">
   <div class="ten columns" style="padding: 10px">
-    <div class="container" style="float:left;margin-left:20px">
+    <div class="container" style="float:right;margin-left:20px">
       <div class="excl" style="left:10px">input</div>
       <div>Conv</div>
       <div>ReLU</div>
@@ -83,12 +83,19 @@
   <div id="nndiagram" class="eight columns" style="border: 1px solid black; margin-top: 15px"></div>
   <div class="four columns">
       <div id="bar_chart">
+        <p>Classification Score</p>
         <svg></svg>
       </div>
+      <br/>
       <div id="line_chart">
+        <p>Model Accuracy & Loss</p>
         <svg></svg>
       </div>
-      <div id="confusion_matrix"></div>
+      <br/>
+      <div id="confusion_matrix">
+        <p>Confusion Matrix</p>
+        <svg style="margin-top: -50px"></svg>
+      </div>
   </div>
 </div>
 </body>
