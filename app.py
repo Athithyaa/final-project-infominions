@@ -13,7 +13,7 @@ app.config.from_object('config')
 
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
 X_test = X_test.astype('float32')
-X_test /= np.max(X_test)
+# X_test /= np.max(X_test)
 X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
 
 
@@ -28,8 +28,11 @@ def predict():
     # load model json file
     params = json.loads(request.data)
     model_path_name = get_model_path_and_filename(params)
-    json_file = open(model_path_name + "model.json", 'r')
-    loaded_model_json = json_file.read()
+    try:
+        json_file = open(model_path_name + "model.json", 'r')
+        loaded_model_json = json_file.read()
+    except:
+        return "invalid json"
     json_file.close()
 
     # convert json to model and load weights
@@ -78,7 +81,10 @@ def predict():
             filter_arr.append(conv_filter.tolist())
         result_json['layer_'+str(layer_no)] = filter_arr
         layer_no = layer_no + 1
+    xx_test = X_test[test_image_index].reshape(1,28,28,1)
+    prob = loaded_model.predict(xx_test)
 
+    result_json['probability'] = prob.tolist()
     return jsonify(result=result_json)
 
 
