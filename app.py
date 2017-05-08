@@ -81,11 +81,12 @@ def predict():
             filter_arr.append(conv_filter.tolist())
         result_json['layers']['layer_'+str(layer_no)] = filter_arr
         layer_no = layer_no + 1
+
     xx_test = X_test[test_image_index].reshape(1, 28, 28, 1)
     prob = loaded_model.predict(xx_test)
     vals = []
     for i in range(prob.shape[1]):
-        vals.append({"label": str(i), "value": str(prob[0][i])})
+        vals.append({"label": str(i), "value": float(prob[0][i])})
     result_json['probability'] = {"values": vals}
     return jsonify(result=result_json)
 
