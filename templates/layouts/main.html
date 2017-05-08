@@ -21,44 +21,51 @@
 </head>
 <body>
   <div class="row text-center" >
-      <div class="twelve columns" style="border: 1px solid black" ><h5>CNN VISUALIZER</h5></div>
+      <div class="twelve columns" style="border: 1px solid black" ><h3>CNN VISUALIZER</h3></div>
 </div>
 <div class="row text-center">
   <div class="twelve columns" style="border: 1px solid black; padding-top: 20px;">
-    <div class="conv-net" style="float:left;margin-left:200px">
-      <label style="display:inline-block;padding-left:10px">No of Filters</label>
-      <select id="noOfFilters" style="display:inline-block;margin-left:10px">
-        <option>8</option>
-        <option>16</option>
-        <option>32</option>
-      </select>
-      <label style="display:inline-block;padding-left:10px">Spatial Extent</label>
-      <select id="spatial_extent" style="display:inline-block;margin-left:10px">
-        <option>3x3</option>
-        <option>5x5</option>
-      </select>
-      <label style="display:inline-block;padding-left:10px">Stride</label>
-      <select id="stride" style="display:inline-block;margin-left:10px">
-        <option>1</option>
-        <option>2</option>
-      </select>
+    <div class="conv-net" style="float:left;margin-left:300px;margin-bottom: 50px;padding:10px;border: 1px solid black;">
+        <p> <h5> Convolution Layer </h5></p>
+      <div>
+          <label style="display:inline-block;padding-left:10px">No of Filters</label>
+          <select id="noOfFilters" style="display:inline-block;margin-left:10px">
+              <option>8</option>
+              <option>16</option>
+              <option>32</option>
+          </select>
+          <label style="display:inline-block;padding-left:10px">Spatial Extent</label>
+          <select id="spatial_extent" style="display:inline-block;margin-left:10px">
+              <option>3x3</option>
+              <option>5x5</option>
+          </select>
+          <label style="display:inline-block;padding-left:10px">Stride</label>
+          <select id="stride" style="display:inline-block;margin-left:10px">
+              <option>1</option>
+              <option>2</option>
+          </select>
+      </div>
     </div>
-    <div class="max-pool" style="float:left;margin-left:20px">
-      <label style="display:inline-block;padding-left:10px">Spatial Extent</label>
-      <select id="spatial_extent_mp" style="display:inline-block;margin-left:10px">
-        <option>2x2</option>
-        <option>3x3</option>
-      </select>
-      <label style="display:inline-block;padding-left: 10px">Stride</label>
-      <select id="stride_mp" style="display:inline-block;margin-left:10px">
-        <option>1</option>
-        <option>2</option>
-      </select>
+    <div class="max-pool" style="float:left;margin-left:300px; margin-bottom: 50px;padding:10px;border: 1px solid black;">
+        <p> <h5> Max Pooling </h5></p>
+      <div>
+          <label style="display:inline-block;padding-left:10px">Spatial Extent </label>
+          <select id="spatial_extent_mp" style="display:inline-block;margin-left:10px">
+              <option>2x2</option>
+              <option>3x3</option>
+          </select>
+          <label style="display:inline-block;padding-left: 10px">Stride </label>
+          <select id="stride_mp" style="display:inline-block;margin-left:10px">
+              <option>1</option>
+              <option>2</option>
+          </select>
+      </div>
     </div>
 </div>
 </div>
 <div class="row text-center" style="border: 1px solid black;">
-  <div class="ten columns" style="padding: 10px">
+    <div class="one column"></div>
+  <div class="eight columns" style="padding: 10px">
     <div class="container" style="float:right;margin-left:20px">
       <div class="excl" style="left:10px">input</div>
       <div>Conv</div>
@@ -76,12 +83,13 @@
     </div>
   </div>
   <div class="two columns">
-    <button class="btn btn-default btn-block" id="predict">Predict</button>
+    <button type="button" class="btn btn-primary" id="predict">Predict</button>
   </div>
+  <div class="one column"></div>
 </div>
 <div class="row text-center" style="border: 1px solid black;">
-  <div id="nndiagram" class="eight columns" style="border: 1px solid black; margin-top: 50px"></div>
-  <div class="four columns">
+  <div id="nndiagram" class="eight columns" style="border: 1px solid black; margin: 30px"></div>
+  <div class="four columns" style="border: 1px solid black; margin: 30px; height: 900px">
       <div id="bar_chart">
         <p>Classification Score</p>
         <svg></svg>
