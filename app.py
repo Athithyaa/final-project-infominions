@@ -65,16 +65,17 @@ def predict():
             relu_layer_num += 1
 
     layer_no = 1
+    xx_test = X_test[test_image_index].reshape(1, 28, 28, 1)
     for layer_name in layer_names:
         conv_layer_model = Model(inputs=loaded_model.input,
                                  outputs=loaded_model.get_layer(layer_name).output)
-        conv_layer_out = conv_layer_model.predict(X_test)
+        conv_layer_out = conv_layer_model.predict(xx_test)
 
         # Find convolution layer depth
         conv_depth = 8
 
         # Set list of filters in current conv layer
-        filters = [conv_layer_out[test_image_index, :, :, filt_id] for filt_id in range(conv_depth)]
+        filters = [conv_layer_out[0, :, :, filt_id] for filt_id in range(conv_depth)]
 
         filter_arr = []
         for filter_id, conv_filter in enumerate(filters):
@@ -82,7 +83,6 @@ def predict():
         result_json['layers']['layer_'+str(layer_no)] = filter_arr
         layer_no = layer_no + 1
 
-    xx_test = X_test[test_image_index].reshape(1, 28, 28, 1)
     prob = loaded_model.predict(xx_test)
     vals = []
     for i in range(prob.shape[1]):
