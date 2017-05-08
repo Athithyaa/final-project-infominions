@@ -1,11 +1,20 @@
-from flask import Flask, render_template, request
+from keras.engine import Model
+
+from flask import Flask, render_template, jsonify, request
 from keras.models import model_from_json
 import os
 import json
+from keras.datasets import mnist
+import numpy as np
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
 app = Flask(__name__)
 app.config.from_object('config')
+
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+X_test = X_test.astype('float32')
+X_test /= np.max(X_test)
+X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
 
 
 @app.route('/')
@@ -17,7 +26,8 @@ def home():
 def predict():
 
     # load model json file
-    model_path_name = get_model_path_and_filename(json.loads(request.data))
+    params = json.loads(request.data)
+    model_path_name = get_model_path_and_filename(params)
     json_file = open(model_path_name + "model.json", 'r')
     loaded_model_json = json_file.read()
     json_file.close()
@@ -26,6 +36,50 @@ def predict():
     loaded_model = model_from_json(loaded_model_json)
     loaded_model.load_weights(model_path_name + "model.h5")
     loaded_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    test_image_index = np.random.randint(0, len(X_test) - 1)
+    test_image = X_test[test_image_index]
+    test_image = test_image.reshape(test_image.shape[0], test_image.shape[1])
+
+    result_json = {'layer_0': [test_image.tolist()]}
+
+    conv_layer_num = 0
+    relu_layer_num = 0
+    maxpool_layer_num = 0
+    layer_names = []
+    for layer in loaded_model.layers:
+        layer_name = str(layer)
+        if "Conv2D" in layer_name:
+            layer_names.append("conv_{}".format(conv_layer_num))
+            conv_layer_num += 1
+
+        elif "MaxPooling2D" in layer_name:
+            layer_names.append("maxpool_{}".format(maxpool_layer_num))
+            maxpool_layer_num += 1
+
+        elif "Dense" in layer_name and relu_layer_num < params['layers'].count('P'):
+            layer_names.append("relu_{}".format(relu_layer_num))
+            relu_layer_num += 1
+
+    layer_no = 1
+    for layer_name in layer_names:
+        conv_layer_model = Model(inputs=loaded_model.input,
+                                 outputs=loaded_model.get_layer(layer_name).output)
+        conv_layer_out = conv_layer_model.predict(X_test)
+
+        # Find convolution layer depth
+        conv_depth = 8
+
+        # Set list of filters in current conv layer
+        filters = [conv_layer_out[test_image_index, :, :, filt_id] for filt_id in range(conv_depth)]
+
+        filter_arr = []
+        for filter_id, conv_filter in enumerate(filters):
+            filter_arr.append(conv_filter.tolist())
+        result_json['layer_'+str(layer_no)] = filter_arr
+        layer_no = layer_no + 1
+
+    return jsonify(result=result_json)
 
 
 def get_model_path_and_filename(params):
