@@ -413,7 +413,6 @@ function sinAndCos() {
 function exampleData() {
     return  [
         {
-            key: "Cumulative Return",
             values: [
                 {
                     "label" : "1" ,
