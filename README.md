@@ -19,3 +19,32 @@ We had several brainstorming and working sessions. In general, we were all invol
 <h2>How to run the project?:</h2>
 The project is available on AWS via the link:
 http://ec2-52-26-45-54.us-west-2.compute.amazonaws.com/
+
+In order to keep it simple we have 6 predefined Models to show the working of the tool. The parameters of the 6 Models are as follows,
+
+* **Convolution Layer** No. of filters: 8, Spatial Extent: 3x3, Stride: 1 <br/>
+  **Max Pooling Layer** Spatial Extent: 2x2, Stride: 1<br/>
+  **NN Layer Ordering** Convolution, RELU, Max Pooling
+* **Convolution Layer** No. of filters: 8, Spatial Extent: 5x5, Stride: 1 <br/>
+  **Max Pooling Layer** Spatial Extent: 2x2, Stride: 1<br/>
+  **NN Layer Ordering** Convolution, RELU, Max Pooling
+* **Convolution Layer** No. of filters: 8, Spatial Extent: 3x3, Stride: 1 <br/>
+  **Max Pooling Layer** Spatial Extent: 2x2, Stride: 1<br/>
+  **NN Layer Ordering** Convolution, RELU, Convolution, RELU, Max Pooling
+* **Convolution Layer** No. of filters: 8, Spatial Extent: 5x5, Stride: 1 <br/>
+  **Max Pooling Layer** Spatial Extent: 2x2, Stride: 1<br/>
+  **NN Layer Ordering** Convolution, RELU, Convolution, RELU, Max Pooling
+* **Convolution Layer** No. of filters: 8, Spatial Extent: 3x3, Stride: 1 <br/>
+  **Max Pooling Layer** Spatial Extent: 2x2, Stride: 1<br/>
+  **NN Layer Ordering** Convolution, RELU, Max Pooling, Convolution, RELU, Max Pooling
+* **Convolution Layer** No. of filters: 8, Spatial Extent: 5x5, Stride: 1 <br/>
+  **Max Pooling Layer** Spatial Extent: 2x2, Stride: 1<br/>
+  **NN Layer Ordering** Convolution, RELU, Max Pooling, Convolution, RELU, Max Pooling
+  
+**Note:** If any other parameters are chosen, while clicking predict button you will get an alert saying invalid model.
+And similarly you won't be able to add more than 6 layers in the NN architecture.
+
+The Line chart and confusion matrix remains constant for any of the specific model. 
+The predict button can be clicked any number of times using a particular model and the bar chart changes
+dynamically based on the input that's randomly chosen.
+
