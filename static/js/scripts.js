@@ -133,28 +133,18 @@ $(document).ready(function () {
             contentType: "application/json",
             success: function (data) {
                 var result = data["result"];
-                drawNN(result["layers"]);
-                plotBarChart([result["probability"]]);
-                plotLineChart(result["acc_loss"]);
+                if(result!=="invalid json") {
+                    drawNN(result["layers"]);
+                    plotBarChart([result["probability"]]);
+                    plotLineChart(result["acc_loss"]);
+                    var labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+                    plotConfusionMatrix(result['con_mat'], labels);
+                }else{
+                    alert("Invalid Layer Selection");
+                }
             }
         })
     });
-
-
-    var confusionMatrix = [
-        [5,65,17,29,95,30,3,64,25,90],
-        [68,51,39,43,92,70,56,37,29,87],
-        [4,97,83,1,5,66,88,19,61,81],
-        [7,64,80,98,73,53,66,42,26,26],
-        [52,80,6,16,26,69,19,48,82,59],
-        [9,45,39,10,42,66,36,12,98,2],
-        [81,43,52,37,54,17,46,58,73,42],
-        [81,82,41,19,94,12,98,22,34,31],
-        [72,8,65,48,41,99,15,38,58,16],
-        [14,13,62,33,98,17,85,58,10,17]
-    ];
-    var labels = ['Class A', 'Class B', 'Class C', 'Class D','Class E', 'Class F','Class G', 'Class H','Class I', 'Class J' ];
-    plotConfusionMatrix(confusionMatrix,labels);
 });
 
 function plotConfusionMatrix(confusionMatrix,labels){
@@ -169,8 +159,8 @@ function plotConfusionMatrix(confusionMatrix,labels){
 }
 
 function Matrix(options) {
-    var width = 250,
-        height = 250,
+    var width = 300,
+        height = 300,
         data = options.data,
         container = options.container,
         labelsData = options.labels,
@@ -193,7 +183,7 @@ function Matrix(options) {
     var numrows = data.length;
     var numcols = data[0].length;
 
-    var svg = d3.select(container).append("svg")
+    var svg = d3.select("#confusion_matrix svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -253,22 +243,21 @@ function Matrix(options) {
         .data(labelsData)
         .enter().append("g")
         .attr("class", "column-label")
-        .attr("transform", function(d, i) { return "translate(" + x(i) + "," + (height+25) + ")"; });
+        .attr("transform", function(d, i) { return "translate(" + x(i) + "," + (height+10) + ")"; });
 
     columnLabels.append("line")
         .style("stroke", "black")
         .style("stroke-width", "1px")
         .attr("x1", x.rangeBand() / 2)
         .attr("x2", x.rangeBand() / 2)
-        .attr("y1", 0)
-        .attr("y2", 5);
+        .attr("y1", -10)
+        .attr("y2", -5);
 
     columnLabels.append("text")
-        .attr("x", 30)
+        .attr("x", 20)
         .attr("y", y.rangeBand() / 2)
         .attr("dy", ".22em")
         .attr("text-anchor", "end")
-        .attr("transform", "rotate(-60)")
         .text(function(d, i) { return d; });
 
     var rowLabels = labels.selectAll(".row-label")
@@ -376,11 +365,10 @@ function plotLineChart(data) {
             });
 
         chart.xAxis     //Chart x-axis settings
-            .axisLabel('Time (ms)')
+            .axisLabel('Number of Epochs')
             .tickFormat(d3.format(',r'));
 
         chart.yAxis     //Chart y-axis settings
-            .axisLabel('Voltage (v)')
             .tickFormat(d3.format('.02f'));
 
         d3.select('#line_chart svg')    //Select the <svg> element you want to render the chart in.
@@ -391,22 +379,4 @@ function plotLineChart(data) {
         nv.utils.windowResize(function() { chart.update() });
         return chart;
     });
-}
-
-function sinAndCos() {
-    var sin = [];
-
-    //Data is represented as an array of {x,y} pairs.
-    for (var i = 0; i < 100; i++) {
-        sin.push({x: i, y: Math.sin(i/10)});
-    }
-
-    //Line chart data should be sent as an array of series objects.
-    return [
-        {
-            values: sin,      //values - represents the array of {x,y} data points
-            key: 'Sine Wave', //key  - the name of the series.
-            color: '#ff7f0e'  //color - optional: choose your own line color.
-        }
-    ];
 }

@@ -71,10 +71,7 @@ def predict():
                                  outputs=loaded_model.get_layer(layer_name).output)
         conv_layer_out = conv_layer_model.predict(xx_test)
 
-        # Find convolution layer depth
         conv_depth = 8
-
-        # Set list of filters in current conv layer
         filters = [conv_layer_out[0, :, :, filt_id] for filt_id in range(conv_depth)]
 
         filter_arr = []
@@ -83,10 +80,17 @@ def predict():
         result_json['layers']['layer_'+str(layer_no)] = filter_arr
         layer_no = layer_no + 1
 
-    prob = loaded_model.predict(xx_test)
+    layers_len = len(loaded_model.layers)
+    dropout_layer_model = Model(inputs=loaded_model.input, outputs=loaded_model.layers[layers_len-2].output)
+    dropout_layer_out = dropout_layer_model.predict(xx_test)
+    prob = np.dot(dropout_layer_out[0], loaded_model.layers[layers_len-1].weights[0].container.data)
+
     vals = []
-    for i in range(prob.shape[1]):
-        vals.append({"label": str(i), "value": float(prob[0][i])})
+    for i in range(len(prob)):
+        v = 0
+        if float(prob[i]) > 0:
+            v = float(prob[i])
+        vals.append({"label": str(i), "value": v})
     result_json['probability'] = {"values": vals}
 
     score_file = open(model_path_name + "model_score.json", 'r')
@@ -103,6 +107,11 @@ def predict():
 
     result_json['acc_loss'] = [{'key': 'Accuracy', 'values': acc}, {'key': 'Loss', 'values': loss}]
 
+    cm_file = open(model_path_name + "model_confusion_matrix.json", 'r')
+    cm_file_json = json.loads(cm_file.read())
+    cm_file.close()
+
+    result_json['con_mat'] = cm_file_json
     return jsonify(result=result_json)
 
 
