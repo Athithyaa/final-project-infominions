@@ -20,7 +20,9 @@ We had several brainstorming and working sessions. In general, we were all invol
 The project is available on AWS via the link:
 http://ec2-52-26-45-54.us-west-2.compute.amazonaws.com/
 
-In order to keep it simple we have 6 predefined Models to show the working of the tool. The parameters of the 6 Models are as follows,
+In order to keep it simple we have 6 predefined models to show the working of the tool.
+
+The parameters of the 6 Models are as follows,
 
 * **Convolution Layer** No. of filters: 8, Spatial Extent: 3x3, Stride: 1 <br/>
   **Max Pooling Layer** Spatial Extent: 2x2, Stride: 1<br/>
