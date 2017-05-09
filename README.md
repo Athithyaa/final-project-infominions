@@ -1,30 +1,21 @@
 # Final Project
-For your final project, use the skills you've developed in this class to tackle a new problem. For example, you could develop a visualization for a complex dataset, construct a physicalization, visualize an algorithmic process, or run an experiment to explore graphical perception. Be creative and have fun!
 
-<h2>Requirements:</h2>
-<h3>Proposal:</h3>
-Please submit a preliminary project proposal that outlines your project's motivating problem and workplan describing what you intend to accomplish to Dr. Szafir via email by Monday, 4.25 at 11:59pm (please send a single email per group with all group members CC'ed). This will take place of that week's reading assignment. I will provide you with guiding feedback for your project and a set of expectations based on this proposal.   
-
-Please note that this is the latest deadline that I would like to see the proposal by. I'd recommend you submit earlier to give yourself more time to work on the final project. I will provide feedback for all proposals sent before the deadline within 24 hours.   
-
-<h3>Deliverables:</h3>
-You will be graded on both the artifacts you generate as part of this project and a project write-up. As stated above, expectations for the artifacts will be provided as feedback for your proposal.   
-
-You should approach the write-up like a research paper. It should contain the following sections:
-<ul>
-<li>A 1-paragraph abstract that summarizes your motivating problem, what you did, and what you found. </li>
-<li>An introduction that describes the motivating problem and why it's interesting or important. </li>
-<li>A related work section that summarizes research related to your project (minimum eight citations). </li>
-<li>A detailed description of your project and justifications for any design elements. </li>
-<li>A discussion of what you found.</li>
-</ul>
-
-The write-up should be a <b>minimum</b> of two pages using the IEEE VIS Poster Format: http://junctionpublishing.org/vgtc/Tasks/camera.html
-
-As with Project 1, please email me a confidential post-mortem that outlines your roles, how you'd rate your own contribution, and how you'd rate the contributions of your teammates.
-
-<h2>Submission</h2>
-Final projects are due 11:59pm on 5.5; however, you will have a no-cost extension until 5.8 at 11:59pm. Note that due to University grading deadlines, late projects will not be accepted.    
+<h2>Abstract</h2>
+Despite the burgeoning success of Deep Convolutional Neural Networks (CNNs) and their pervasion into myriad domains, ranging from art and music to science and medicine, their deep and complex architectures, innumerable parameters, and nonlinear activations renders their inner workings nearly incomprehensible. This 'black box' nature of CNNs prohibits not only a robust intellectual understanding for academic endeavors and optimization engineering, but it also restricts these models and their exceptional pattern-recognition power to expert-users. Importantly, the lack of understanding how and why a CNN makes any particular decision also leads to significant legal liability for self-driving automobile companies and medical institutions. Interactive visualizations of CNNs may provide both expert and non-expert users the insight and intuition required to more optimally architect CNNs, as well as foster more confidence in their inner workings or reveal pitfalls to which solutions may be engineered. Based upon a review of current deep neural network visualization techniques, we have developed an interactive visualization of deep CNNs that enables users to interactively construct CNNs of various architectures and adjust the hyper-parameters of the CNN's layers. These models are trained on the MNIST dataset, and intermediate layer feature visualizations are provided, in addition to time-series training data, confusion matrices, and prediction probabilities.
 
 
-Please upload all deliverables through GitHub Classroom. This includes any code, data, documentation, or write-up. If you have physical artifacts, please either reach out to me to set up an appointment to present your artifacts or submit an explanatory video and/or set of photographs.
+<h2>The Team:</h2>
+We had several brainstorming and working sessions. In general, we were all involved in the project extended to the following:
+
+* **Michael Iuzzolino**: CNN developement
+
+* **Shirly Montero Quesada**: Readme, editing final report
+
+* **Athithyaa Panchapakesan Rajeswari**: Database/Server/Designs on Server, interface design, visual design and styling
+
+* **Santhanakrishnan Ramani**: Database/Server/Designs on Server, interface design, visual design and styling
+
+
+<h2>How to run the project?:</h2>
+The project is available on AWS via the link:
+http://ec2-52-26-45-54.us-west-2.compute.amazonaws.com/
